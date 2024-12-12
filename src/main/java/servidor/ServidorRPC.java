@@ -1,5 +1,6 @@
 package servidor;
 
+import dominios.Entretenimiento;
 import dominios.Turismo;
 import dominios.Videojuego;
 import org.apache.xmlrpc.WebServer;
@@ -12,6 +13,7 @@ public class ServidorRPC {
 
             WebServer server = new WebServer(7070);
             server.addHandler("turismo", new Turismo());
+            server.addHandler("entretenimiento", new Entretenimiento());
             //server.addHandler("geografia", new Geografia());
             server.addHandler("videojuegos", new Videojuego());
 

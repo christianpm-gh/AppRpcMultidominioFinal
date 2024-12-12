@@ -29,9 +29,7 @@ public class ClienteRPC {
                     break;
 
                 case 3:
-                    System.out.println("1. Horarios de cines");
-                    System.out.println("2. Horario de museos");
-                    // Implementa las opciones para entretenimiento
+                    procesarDominioEntretenimiento(scanner, scannerCadenas, cliente);
                     break;
 
                 case 4:
@@ -45,6 +43,63 @@ public class ClienteRPC {
 
         } catch (Exception e) {
             System.err.println("JavaClient error: " + e);
+        }
+    }
+
+    private static void procesarDominioEntretenimiento(Scanner scanner, Scanner scannerCadenas, XmlRpcClient cliente) throws IOException, XmlRpcException {
+        System.out.println("1. Cines y horarios donde se exhibe una pelicula");
+        System.out.println("2. Horario de servicio de un museo");
+        System.out.println("3. Costo de una obra por teatro");
+        System.out.print("Tu eleccion : ");
+        int eleccionEntretenimiento = scanner.nextInt();
+
+        if (eleccionEntretenimiento == 1) {
+            System.out.print("Ingresa el nombre de la pelicula: ");
+            String pelicula = scannerCadenas.nextLine();
+
+            Vector<String> paramsPelicula = new Vector<>();
+            paramsPelicula.add(pelicula);
+
+            Object horariosCine = cliente.execute("entretenimiento.getHorariosPorPelicula", paramsPelicula);
+            if (horariosCine != null && !horariosCine.toString().isEmpty()) {
+                System.out.println("Horarios para la pelicula \"" + pelicula + "\":");
+                System.out.println(horariosCine);
+            } else {
+                System.out.println("No se encontraron horarios para la pelicula \"" + pelicula + "\".");
+            }
+
+        } else if (eleccionEntretenimiento == 2) {
+            System.out.print("Ingresa el nombre del museo: ");
+            String museo = scannerCadenas.nextLine();
+
+            Vector<String> paramsMuseo = new Vector<>();
+            paramsMuseo.add(museo);
+
+            Object horarioMuseo = cliente.execute("entretenimiento.getHorarioMuseo", paramsMuseo);
+            if (horarioMuseo != null && !horarioMuseo.toString().isEmpty()) {
+                System.out.println("Horario para el museo \"" + museo + "\":");
+                System.out.println(horarioMuseo);
+            } else {
+                System.out.println("No se encontro informacion para el museo \"" + museo + "\".");
+            }
+
+        } else if (eleccionEntretenimiento == 3) {
+            System.out.print("Ingresa el nombre de la obra: ");
+            String obra = scannerCadenas.nextLine();
+
+            Vector<String> paramsObra = new Vector<>();
+            paramsObra.add(obra);
+
+            Object teatrosObra = cliente.execute("entretenimiento.getObra", paramsObra);
+            if (teatrosObra != null && !teatrosObra.toString().isEmpty()) {
+                System.out.println("Informacion para la obra \"" + obra + "\":");
+                System.out.println(teatrosObra);
+            } else {
+                System.out.println("No se encontró informacion para la obra \"" + obra + "\".");
+            }
+
+        } else {
+            System.out.println("Opción no válida.");
         }
     }
 
