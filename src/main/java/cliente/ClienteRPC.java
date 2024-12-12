@@ -23,9 +23,7 @@ public class ClienteRPC {
                     break;
 
                 case 2:
-                    System.out.println("1. Ubicación UAM");
-                    System.out.println("2. Datos profesor");
-                    // Implementa las opciones para geografía
+                    procesarDominioGeografia(scanner, scannerCadenas, cliente);
                     break;
 
                 case 3:
@@ -43,6 +41,68 @@ public class ClienteRPC {
 
         } catch (Exception e) {
             System.err.println("JavaClient error: " + e);
+        }
+    }
+
+    private static void procesarDominioGeografia(Scanner scanner, Scanner scannerCadenas, XmlRpcClient cliente) throws IOException, XmlRpcException {
+        System.out.println("1. Consultar ubicacion de espacios fisicos");
+        System.out.println("2. Recuperar datos personales de un profesor");
+        System.out.println("3. Listar materias impartidas por un profesor");
+        System.out.print("Tu eleccion : ");
+        int eleccionGeografia = scanner.nextInt();
+
+        if (eleccionGeografia == 1) {
+            System.out.print("Ingresa el tipo de espacio (ej. aula, laboratorio, cubiculo): ");
+            String tipoEspacio = scannerCadenas.nextLine();
+
+            Vector<String> paramsEspacio = new Vector<>();
+            paramsEspacio.add(tipoEspacio);
+
+            Vector<?> ubicaciones = (Vector<?>) cliente.execute("geografia.getUbicacionEspacioFisico", paramsEspacio);
+            if (ubicaciones.isEmpty()) {
+                System.out.println("No se encontraron ubicaciones para el tipo de espacio: " + tipoEspacio);
+            } else {
+                System.out.println("Ubicaciones para el tipo de espacio \"" + tipoEspacio + "\":");
+                for (Object ubicacion : ubicaciones) {
+                    System.out.println("\t- " + ubicacion);
+                }
+            }
+
+        } else if (eleccionGeografia == 2) {
+            System.out.print("Ingresa el id del profesor: ");
+            int idProfesor = scanner.nextInt();
+
+            Vector<Integer> paramsProfesor = new Vector<>();
+            paramsProfesor.add(idProfesor);
+
+            // Llama al servidor para obtener datos del profesor
+            Object datosProfesor = cliente.execute("geografia.getDatosProfesor", paramsProfesor);
+            if (datosProfesor != null) {
+                System.out.println("Datos del profesor con id " + idProfesor + ":");
+                System.out.println(datosProfesor);
+            } else {
+                System.out.println("No se encontró informacion para el profesor con id " + idProfesor + ".");
+            }
+
+        } else if (eleccionGeografia == 3) {
+            System.out.print("Ingresa el id del profesor: ");
+            int idProfesor = scanner.nextInt();
+
+            Vector<Integer> paramsProfesor = new Vector<>();
+            paramsProfesor.add(idProfesor);
+
+            Vector<?> materias = (Vector<?>) cliente.execute("geografia.getMateriasProfesor", paramsProfesor);
+            if (materias.isEmpty()) {
+                System.out.println("No se encontraron materias impartidas por el profesor con ID " + idProfesor + ".");
+            } else {
+                System.out.println("Materias impartidas por el profesor con id " + idProfesor + ":");
+                for (Object materia : materias) {
+                    System.out.println("\t- " + materia);
+                }
+            }
+
+        } else {
+            System.out.println("Opción no válida.");
         }
     }
 

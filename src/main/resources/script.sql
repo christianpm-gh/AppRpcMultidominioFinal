@@ -302,3 +302,73 @@ INSERT INTO Funciones (id_teatro, id_obra, fecha, hora, costo) VALUES
                                                                    (5, 6, '2024-12-19', '21:30:00', 600.00),
                                                                    (6, 2, '2024-12-20', '18:30:00', 500.00),
                                                                    (6, 5, '2024-12-21', '20:00:00', 450.00);
+#########################################################################################################
+-- DOMINIO DE GEOGRAFIA -------------------------------------------------------------------------------
+#########################################################################################################
+
+-- Crear la tabla EspacioFisico
+CREATE TABLE EspacioFisico (
+                               idEspacio INT AUTO_INCREMENT PRIMARY KEY,
+                               tipoEspacio ENUM('aula', 'laboratorio', 'cubículo') NOT NULL,
+                               ubicacion VARCHAR(255) NOT NULL,
+                               disponibilidad BOOLEAN DEFAULT TRUE
+);
+
+-- Crear la tabla Profesor
+CREATE TABLE Profesor (
+                          idProfesor INT AUTO_INCREMENT PRIMARY KEY,
+                          nombre VARCHAR(100) NOT NULL,
+                          telefonoOficina VARCHAR(15) NOT NULL,
+                          correo VARCHAR(100) UNIQUE NOT NULL,
+                          ubicacionCubiculo INT,
+                          FOREIGN KEY (ubicacionCubiculo) REFERENCES EspacioFisico(idEspacio)
+);
+
+-- Crear la tabla Materia
+CREATE TABLE Materia (
+                         idMateria INT AUTO_INCREMENT PRIMARY KEY,
+                         nombreMateria VARCHAR(100) NOT NULL,
+                         codigoMateria VARCHAR(10) UNIQUE NOT NULL,
+                         creditos INT DEFAULT NULL,
+                         semestre VARCHAR(20) NOT NULL,
+                         idProfesor INT NOT NULL,
+                         FOREIGN KEY (idProfesor) REFERENCES Profesor(idProfesor)
+);
+
+-- Insertar datos en EspacioFisico
+INSERT INTO EspacioFisico (tipoEspacio, ubicacion, disponibilidad)
+VALUES
+    ('cubículo', 'Edificio H, piso 2', TRUE),
+    ('cubículo', 'Edificio C, piso 3', FALSE),
+    ('aula', 'Edificio B, salón 101', TRUE),
+    ('aula', 'Edificio B, salón 102', TRUE),
+    ('laboratorio', 'Edificio G, laboratorio 3', TRUE),
+    ('laboratorio', 'Edificio G, laboratorio 5', FALSE),
+    ('cubículo', 'Edificio A, piso 1', TRUE),
+    ('aula', 'Edificio F, salón 205', TRUE);
+
+
+-- Insertar datos en Profesor
+INSERT INTO Profesor (nombre, telefonoOficina, correo, ubicacionCubiculo)
+VALUES
+    ('Juan Pérez', '555-1234', 'juan.perez@azc.uam.mx', 1),
+    ('María López', '555-5678', 'maria.lopez@azc.uam.mx', 2),
+    ('Carlos Martínez', '555-7890', 'carlos.martinez@azc.uam.mx', NULL),
+    ('Ana Gómez', '555-4567', 'ana.gomez@azc.uam.mx', 3),
+    ('Luis Torres', '555-6543', 'luis.torres@azc.uam.mx', 4),
+    ('Sofía Ramírez', '555-4321', 'sofia.ramirez@azc.uam.mx', NULL);
+
+
+-- Insertar datos en Materia
+INSERT INTO Materia (nombreMateria, codigoMateria, creditos, semestre, idProfesor)
+VALUES
+    ('Métodos Numéricos', 'MAT101', 8, '24O', 1),
+    ('Probabilidad y Estadística', 'EST201', 6, '24P', 1),
+    ('Algoritmos y Programación', 'ALG301', 7, '24O', 2),
+    ('Física Moderna', 'FIS401', 8, '24O', 3),
+    ('Química General', 'QUI501', 6, '24P', 4),
+    ('Introducción a la Biología', 'BIO101', 4, '23P', 5),
+    ('Ingeniería de Software', 'ISW401', 9, '24O', 6),
+    ('Cálculo Diferencial', 'CAL201', 8, '23O', 2),
+    ('Bases de Datos', 'BD301', 7, '24O', 3),
+    ('Redes de Computadoras', 'RED401', 6, '23P', 6);
