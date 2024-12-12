@@ -75,7 +75,6 @@ public class ClienteRPC {
             Vector<Integer> paramsProfesor = new Vector<>();
             paramsProfesor.add(idProfesor);
 
-            // Llama al servidor para obtener datos del profesor
             Object datosProfesor = cliente.execute("geografia.getDatosProfesor", paramsProfesor);
             if (datosProfesor != null) {
                 System.out.println("Datos del profesor con id " + idProfesor + ":");
