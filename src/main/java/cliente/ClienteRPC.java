@@ -183,7 +183,11 @@ public class ClienteRPC {
             paramsDivisas.add(monto);
 
             Object resultado = cliente.execute("turismo.cambiaDiv", paramsDivisas);
-            System.out.println("Resultado de la conversión: " + resultado);
+            if ((Double) resultado == -1.0){
+                System.out.println("Una de las divisas que introdujo o ambas son invalidas");
+            }else{
+                System.out.println("Resultado de la conversión: " + resultado);
+            }
 
         } else if (eleccionTurismo == 2) {
             System.out.print("Ingresa el nombre de la ciudad: ");

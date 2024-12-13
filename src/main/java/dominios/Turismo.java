@@ -23,8 +23,7 @@ public class Turismo {
                 return rs.getDouble("factorEX");
             } else {
                 // Si no se encuentra el factorEx para las divisas, manejamos el error
-                System.out.println("No se encontró el factor de conversión para estas divisas.");
-                return null;  // O puedes lanzar una excepción si prefieres
+                return -1.0;
             }
         }
 
