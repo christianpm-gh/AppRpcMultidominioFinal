@@ -40,8 +40,7 @@ public class Turismo {
             if (rs.next()){
                return rs.getString("clima");
             }else {
-                System.out.println("No se encontró registro de la ciudad elegida.");
-                return null;
+                return "doesntexist";
             }
         }
     }
@@ -59,8 +58,7 @@ public class Turismo {
                 hora = rs.getString("hora");
                 return hora;
             }else {
-                System.out.println("No se encontró registro de la ciudad elegida.");
-                return null;
+                return "doesntexist";
             }
         }
     }

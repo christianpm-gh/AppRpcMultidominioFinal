@@ -197,10 +197,10 @@ public class ClienteRPC {
             paramsCiudad.add(ciudad);
 
             Object clima = cliente.execute("turismo.getClima", paramsCiudad);
-            if (clima != null) {
-                System.out.println("El clima en " + ciudad + " es: " + clima);
-            } else {
+            if (((String)clima).equalsIgnoreCase("doesntexist")) {
                 System.out.println("No se encontró información climática para la ciudad.");
+            } else {
+                System.out.println("El clima en " + ciudad + " es: " + clima);
             }
 
         } else if (eleccionTurismo == 3) {
@@ -211,10 +211,10 @@ public class ClienteRPC {
             paramsCiudad.add(ciudad);
 
             Object hora = cliente.execute("turismo.getHora", paramsCiudad);
-            if (hora != null) {
-                System.out.println("La hora exacta en " + ciudad + " es: " + hora);
-            } else {
+            if (((String)hora).equalsIgnoreCase("doesntexist")) {
                 System.out.println("No se encontró información horaria para la ciudad.");
+            } else {
+                System.out.println("La hora exacta en " + ciudad + " es: " + hora);
             }
 
         } else {
