@@ -267,7 +267,7 @@ public class ClienteRPC {
             paramsAnio.add(anio);
             Vector<?> videojuegosPorAnio = (Vector<?>) cliente.execute("videojuegos.obtenerVideojuegosPorAnio", paramsAnio);
             if (videojuegosPorAnio.isEmpty()){
-                System.out.println("No hay videojuegos registrados");
+                System.out.println("No hay videojuegos lanzados en dicho anio");
             }
             for (Object juego : videojuegosPorAnio) {
                 System.out.println("\t- " + juego);
