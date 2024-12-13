@@ -4,6 +4,7 @@ import org.apache.xmlrpc.XmlRpcClient;
 import org.apache.xmlrpc.XmlRpcException;
 
 import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -13,32 +14,39 @@ public class ClienteRPC {
             XmlRpcClient cliente = new XmlRpcClient("http://localhost:7070/");
             Scanner scanner = new Scanner(System.in);
             Scanner scannerCadenas = new Scanner(System.in);
+            boolean continuar = true;
 
-            imprimirCategorias();
-            int categoria = scanner.nextInt();
+            while (continuar) {
+                System.out.println("\n");
+                imprimirCategorias();
+                int categoria = obtenerEntradaEntera(scanner);
 
-            switch (categoria) {
-                case 1:
-                    procesarDominioTurismo(scanner, scannerCadenas, cliente);
-                    break;
+                switch (categoria) {
+                    case 1:
+                        procesarDominioTurismo(scanner, scannerCadenas, cliente);
+                        break;
 
-                case 2:
-                    procesarDominioGeografia(scanner, scannerCadenas, cliente);
-                    break;
+                    case 2:
+                        procesarDominioGeografia(scanner, scannerCadenas, cliente);
+                        break;
 
-                case 3:
-                    procesarDominioEntretenimiento(scanner, scannerCadenas, cliente);
-                    break;
+                    case 3:
+                        procesarDominioEntretenimiento(scanner, scannerCadenas, cliente);
+                        break;
 
-                case 4:
-                    procesarDominioVideojuegos(scanner, scannerCadenas, cliente);
-                    break;
+                    case 4:
+                        procesarDominioVideojuegos(scanner, scannerCadenas, cliente);
+                        break;
 
-                default:
-                    System.out.println("Opción no válida");
-                    break;
+                    case 5:
+                        continuar = false;
+                        break;
+
+                    default:
+                        System.out.println("Opción no válida");
+                        break;
+                }
             }
-
         } catch (Exception e) {
             System.err.println("JavaClient error: " + e);
         }
@@ -49,7 +57,7 @@ public class ClienteRPC {
         System.out.println("2. Recuperar datos personales de un profesor");
         System.out.println("3. Listar materias impartidas por un profesor");
         System.out.print("Tu eleccion : ");
-        int eleccionGeografia = scanner.nextInt();
+        int eleccionGeografia = obtenerEntradaEntera(scanner);
 
         if (eleccionGeografia == 1) {
             System.out.print("Ingresa el tipo de espacio (ej. aula, laboratorio, cubiculo): ");
@@ -110,7 +118,7 @@ public class ClienteRPC {
         System.out.println("2. Horario de servicio de un museo");
         System.out.println("3. Costo de una obra por teatro");
         System.out.print("Tu eleccion : ");
-        int eleccionEntretenimiento = scanner.nextInt();
+        int eleccionEntretenimiento = obtenerEntradaEntera(scanner);
 
         if (eleccionEntretenimiento == 1) {
             System.out.print("Ingresa el nombre de la pelicula: ");
@@ -167,7 +175,7 @@ public class ClienteRPC {
         System.out.println("2. Clima de una ciudad");
         System.out.println("3. Hora exacta de una ciudad");
         System.out.print("Tu elección : ");
-        int eleccionTurismo = scanner.nextInt();
+        int eleccionTurismo = obtenerEntradaEntera(scanner);
 
         if (eleccionTurismo == 1) {
             System.out.print("Ingresa la divisa de origen (ej. MXN): ");
@@ -175,24 +183,32 @@ public class ClienteRPC {
             System.out.print("Ingresa la divisa de destino (ej. USD): ");
             String divisaDestino = scannerCadenas.nextLine();
             System.out.print("Ingresa el monto: ");
-            String monto = scannerCadenas.nextLine();
-
+            String monto;
+            while (true) {
+                try {
+                    System.out.print("Ingresa el monto: ");
+                    monto = scannerCadenas.nextLine();
+                    double m = Double.parseDouble(monto);
+                    break; // Salir del bucle si la entrada es válida
+                } catch (NumberFormatException e) {
+                    System.out.println("Entrada no válida. Por favor, ingrese un número decimal válido.");
+                }
+            }
             Vector<String> paramsDivisas = new Vector<>();
             paramsDivisas.add(divisaOrigen);
             paramsDivisas.add(divisaDestino);
             paramsDivisas.add(monto);
 
             Object resultado = cliente.execute("turismo.cambiaDiv", paramsDivisas);
-            if ((Double) resultado < 0.0){
-                System.out.println("Una de las divisas que introdujo o ambas son invalidas");
-            }else{
+            if((Double) resultado >= 0.0 && !resultado.toString().isEmpty()) {
                 System.out.println("Resultado de la conversión: " + resultado);
+            }else{
+                System.out.println("Una o ambas de las divisas introducidas son invalidas.");
             }
 
         } else if (eleccionTurismo == 2) {
             System.out.print("Ingresa el nombre de la ciudad: ");
             String ciudad = scannerCadenas.nextLine();
-
             Vector<String> paramsCiudad = new Vector<>();
             paramsCiudad.add(ciudad);
 
@@ -236,7 +252,7 @@ public class ClienteRPC {
         System.out.println("2. Mostrar videojuegos por estudio");
         System.out.println("3. Mostrar videojuegos en un año especifico");
         System.out.print("Tu elección : ");
-        int eleccionVideojuegos = scanner.nextInt();
+        int eleccionVideojuegos = obtenerEntradaEntera(scanner);
         if (eleccionVideojuegos == 1) {
             System.out.print("Teclea el género: ");
             String genero = scannerCadenas.nextLine();
@@ -257,12 +273,16 @@ public class ClienteRPC {
             Vector<String> paramsEstudio = new Vector<>();
             paramsEstudio.add(estudio);
             Vector<?> videojuegosPorEstudio = (Vector<?>) cliente.execute("videojuegos.obtenerVideojuegosPorEstudio", paramsEstudio);
-            for (Object juego : videojuegosPorEstudio) {
-                System.out.println("\t- " + juego);
+            if (videojuegosPorEstudio.isEmpty()){
+                System.out.println("No hay registro de videjuegos del estudio introducido.");
+            }else {
+                for (Object juego : videojuegosPorEstudio) {
+                    System.out.println("\t- " + juego);
+                }
             }
         } else if (eleccionVideojuegos == 3) {
             System.out.print("Teclea el año: ");
-            int anio = scanner.nextInt();
+            int anio = obtenerEntradaAnio(scanner);
             Vector<Integer> paramsAnio = new Vector<>();
             paramsAnio.add(anio);
             Vector<?> videojuegosPorAnio = (Vector<?>) cliente.execute("videojuegos.obtenerVideojuegosPorAnio", paramsAnio);
@@ -274,6 +294,32 @@ public class ClienteRPC {
             }
         } else {
             System.out.println("Opcion no valida");
+        }
+    }
+
+    public static int obtenerEntradaEntera(Scanner scanner) {
+        int numero;
+        while (true) {
+            try {
+                numero = scanner.nextInt();
+                return numero; // Salir del bucle y devolver el número si la entrada es válida
+            } catch (InputMismatchException e) {
+                System.out.print("Entrada no válida. Por favor, ingrese una opción válida: ");
+                scanner.nextLine(); // Limpiar el buffer del scanner
+            }
+        }
+    }
+
+    public static int obtenerEntradaAnio(Scanner scanner) {
+        int numero;
+        while (true) {
+            try {
+                numero = scanner.nextInt();
+                return numero; // Salir del bucle y devolver el número si la entrada es válida
+            } catch (InputMismatchException e) {
+                System.out.print("Entrada no válida. Por favor, ingrese un año válido: ");
+                scanner.nextLine(); // Limpiar el buffer del scanner
+            }
         }
     }
 
