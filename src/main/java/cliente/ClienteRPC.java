@@ -76,7 +76,7 @@ public class ClienteRPC {
             paramsProfesor.add(idProfesor);
 
             Object datosProfesor = cliente.execute("geografia.getDatosProfesor", paramsProfesor);
-            if (datosProfesor != null) {
+            if (!((String)datosProfesor).equalsIgnoreCase("doesntexist")) {
                 System.out.println("Datos del profesor con id " + idProfesor + ":");
                 System.out.println(datosProfesor);
             } else {
@@ -183,7 +183,7 @@ public class ClienteRPC {
             paramsDivisas.add(monto);
 
             Object resultado = cliente.execute("turismo.cambiaDiv", paramsDivisas);
-            if ((Double) resultado == -1.0){
+            if ((Double) resultado < 0.0){
                 System.out.println("Una de las divisas que introdujo o ambas son invalidas");
             }else{
                 System.out.println("Resultado de la conversión: " + resultado);

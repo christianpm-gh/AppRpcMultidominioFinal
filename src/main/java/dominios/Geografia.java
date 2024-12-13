@@ -54,8 +54,7 @@ public class Geografia {
                             "\nCorreo: " + rs.getString("correo") +
                             "\nUbicación del cubículo: " + rs.getString("ubicacionCubiculo");
                 } else {
-                    System.out.println("No se encontró un profesor con este ID.");
-                    return null;
+                    return "doesntexist";
                 }
             }
         }
